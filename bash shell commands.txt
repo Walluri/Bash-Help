@@ -1,0 +1,167 @@
+1. bash is the standard shell
+
+2. $chmod +x myshell.sh
+chmod -change mode
++x -  add executable permission
+
+3. $which bash - will tell you from where your bash is in your system : 
+bin/bash
+
+4. #! - SharpBang ..shbang
+this is put at the top of the file - this is the first thing we want in our file.
+    $ #! /bin/bash
+
+5. comments 
+# comment
+
+6. print something on the screen
+$echo
+
+7. create variables 
+#should be upper case by convention - letter numbers and underscores
+NAME="Satya"
+echo $NAME
+echo ${NAME}
+
+8. deal with user input
+$read -p "Enter your name:" USER
+$echo "Hello ${USER}"
+-p prompt the user
+
+9. conditional if statements 
+if [ "$NAME" == "BRAD" ]
+then
+echo "your name is "
+fi.
+
+10. conditional if else statement
+
+NAME="SATYA"
+if [ "${NAME}"=="SATYA"]
+then
+echo "Welcome user ${NAME}"
+else 
+echo "not welcome"
+fi
+
+
+11. else if 
+NAME="JACgfdhK"
+
+if [ "$NAME"=="SATYA" ]
+ then
+  echo "Hi Satya"
+elif [ "$NAME"=="JACK" ]
+ then
+  echo "welcome Jack"
+else
+ echo "bye"
+fi
+
+
+12.  COMPARISION OPERATORS
+$val1 -eq val2  : Returns true if values are equal
+$val1 -ne val2 : Returns true if the values are not equal
+$val1 -gt val2 : Returns true if val1 is greater than val2
+
+-ge : Greater than or equal to
+lt : Less than
+le : Less than or equal to 
+
+Example: 
+NUM1=8
+NUM2=8
+if [ "$NUM1" -gt "$NUM2" ]
+then  echo  "num1 is greater than num2"
+elif [ "$NUM2" -gt "$NUM1" ]
+then  echo "num2 is greater than num1"
+else echo "Numbers are equal"
+fi
+
+13. FILE CONDITIONS
+
+# we can look at files in directory as see if its a file..if it exists..if its readable..if the user id is set on the file..if its executable
+-e : true if the file exists
+
+-f : true if the provided string is a file
+-d : true if the file is a directory
+-x : true if the file is executable
+
+-r : true of the file is readable
+-w : true if the file 
+
+-s : true if the file has a non zero size
+
+-u : true if the user id is set on a file,
+-g : true if the group id is set on a file.
+
+
+touch test.txt
+FILE="test.txt"
+if [ -f "$FILE" ]
+then echo "${FILE} is a file"
+else echo "${FILE} is not a file"
+fi
+sudo rm test.txt
+
+
+14 : CASE STATEMENTS : 
+
+read -p "Are you over 21? " ANSWER
+case "$ANSWER" in
+  [yY] | [yY][eE][sS])
+    echo "you can have beer"
+   ;;
+  [nN] | [nN][oO])
+    echo "You can not have beer"
+   ;;
+  *)
+    echo "Please y/yes or n/NO"
+   ;;
+esac
+
+15 : LOOPS
+#for loop
+NAMES="apple Banana cherry dragonfruit"
+for NAME in $NAMES
+ do echo "Hello $NAME"
+done
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
