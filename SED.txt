@@ -1,0 +1,103 @@
+Streamline editor : modify / filter text files line wise
+
+'LINENUMBER WANTTOSUBSTITUTE /WHAT TO SUBSTITUTE regex/SUBSTITUTEWITHTHIS/globalcasesensitiveflags'
+
+SED with line numbers
+1. cat one.txt | sed -r '1,3d'
+Take input from the first command and send to sed.
+Delete lines from 1 to 3 and print the output.
+cat one.txt : will send all lines from file in to the sed command
+sed -r '1,3d' : sed will delete 1-3 lines and print the output
+
+2. 
+-n :  is used for negate
+-r : regular expressions used
+
+
+3. cat one.txt | sed -r '1,3p'
+Here lines 1-3 will be printed again.
+
+4. cat one.txt | sed -n -r '1,3p'
+Only lines 1-3 will be printed.
+
+SED with patters
+5.  delete a particular line
+$ cat one.txt | sed -r '/line6/d'
+#when ever you see a line with text 'line6', delete it..dont print it
+
+6. print a line which contains a particular string
+$ cat one.txt | sed -r -n '/line5/p'
+
+7. substitute command
+$ cat one.txt | sed -r 's/line5/lineFive/'
+#line5 will be replaced with lineFive
+#only the first occurance of 'line5' will be replaced with 'lineFive'
+
+8. global flag 'g'  - replace globally on the entire line
+cat one.txt | sed -r 's/line5/lineFive/g'
+#line5 is case sensitive
+
+9. case insensitive flag -i
+ $ cat one.txt | sed -r 's/LINE5/lineFive/gi'
+
+10. Remove text 
+# /whattoremove//
+$cat one.txt | sed -r 's/LINE//gi'
+
+11.do substitution on certain lines
+$ cat one.txt | sed -r '5,7 s/LINE/lion/gi'
+#substitute LINE with lion in line numbers 5 to 7 included.
+
+12. substitution from a line till a particular line
+$ cat one.txt | sed -r '5,+1 s/LINE/lion/gi'
+# from line 5 and 1 more than 5 do the substituition.
+
+13. $ eod of file
+$ cat one.txt | sed -r '5,$ s/LINE/lion/gi'
+# starting from line 5 till eofile do the substitution.
+
+14. where to give regular expressions
+$ cat one.txt | sed -r '5,$ s/regx/lion/gi'
+
+15.Insert a blank line after each line
+$ sed G one.txt
+
+16. Insert 2 blank lines
+$ sed 'G;G' one.txt
+
+17. send output of sed to another file
+ cat one.txt | sed 's/1/Line 1/' > two.txt
+
+18.delete 1st line and then add2 to it and delete that line and so on ... i.e delete all odd lines
+cat one.txt | sed -r '1~2d'
+
+19. perform action on a particular line only : replace line with lion on line 5 only
+ cat one.txt | sed -r '5s/line/lion/gi'
+
+20. If there is any line that begins with a 0-9 digit then replace it with digitalcode string
+$ cat one.txt | sed -r -e 's/^[0-9]/digitalcode/gi'
+
+21. character class - 
+
+22. Multiple expressions in a sed command
+$sed -e 's/^1/CodeLine 1/' -e 's/^2/CodeLine2/' one.txt
+if a line begins with 1 substitute with CodeLine1
+
+23. print only a particular line 
+$ sed -r '2p' one.txt
+# this will print all the lines but the 2nd line will be printed again..so negate the above command will pass zero lines to the expressn
+$ sed -r -n '2p' one.txt
+
+24. delete a particualr line
+$ sed -r '2d' one.txt
+
+
+----- one.txt ----- 
+1 line1
+2 line2
+line three
+4 line4
+5 line5 line5 line5
+6 line6
+7 line7
+

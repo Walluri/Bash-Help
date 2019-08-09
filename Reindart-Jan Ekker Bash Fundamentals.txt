@@ -1,0 +1,577 @@
+1. Why shell scripts 
+
+- they help you execute bash commands from a file.
+- regular commands can be scheduled
+- take advantage of UNIX toolset
+
+2. Bash scripts excel at :
+
+- file manipulation : move files around / search a file system / make a backup
+- put other programs together
+- grep+ sed : text processor
+
+3. Bash is not good at :
+ 
+- doing calculations : math calculations
+- cant not handle binary data very well
+- no fancy graphics
+
+4. SETTING PATH
+$ script.sh - will not work
+- your script should be in the path that bash searched for executables : 
+  $./script.sh
+- add PERMISSIONS
+  $ls -l script.sh will give you the permission you have
+  $chmod u+x script.sh will add executable permissions only to the User. [to add executable permission to all users $chmod a+x]
+
+5. Real Script
+#!/bin/bash
+/bin/bash  - which interpreter should run your code. (bash scripts)
+                - you can also provide options to your interpreter
+	- linux + mac
+#!/usr/bin/env bash  -  use this for portability
+		-  find bash in the current users environment PATH
+		-  cant pass args in this case
+first line + this script should be run by the BASH interpreter
+[other shells like sh python etc]
+
+6. # comments
+
+7. Script to write the command line argument to a text file.
+----- tn.sh -----
+#!/bin/bash
+echo $1 >> ./notes.txt
+----- tn.sh -----
+
+$./tn.sh "Hi there"
+# quote the string for the entire string to be written else only hi will be written/appended at the end
+# the string hi there will be printed into a file notes.txt after its creation.
+
+8.
+----- tn.sh -----
+#!/bin/bash
+echo $* >> ./notes.txt
+----- tn.sh -----
+
+$./tn.sh Hi there passing multiple args
+# $* in the script means all passed arguments
+# notes will contain all the args passed to the script
+
+9. Print date when a note is entered
+----- tn.sh -----
+#!/bin/bash
+echo $(date) : $* >> ~/notes.txt
+----- tn.sh -----
+
+$./tn.sh hi there
+
+# notes.txt contents as below
+Wed Jul 31 20:24:40 IST 2019 : hi there
+
+10. what if you want to call this script from another directory ?
+- so put your scripts in the path so that bash will find it regardless of the current working directory.
+- make a dir where you keep all your scripts ex bin
+- put bin dir in path
+
+$ PATH=$PATH:~/bin
+- how to save this customization to your profile ?
+-now you can be in any directory and execute your bash script but note the line "echo $(date) : $* >> ~/notes.txt". if this is 
+ written as just notes.txt then this file will be saved in the directory from where you are executing this command
+
+11. As you are writing something to the note. lets show a confirmation to the user.
+----- tn.sh -----
+#!/bin/bash
+echo $(date) : $* >> ~/notes.txt
+echo Note Saved $*
+----- tn.sh -----
+
+$ tn.sh wello
+Note saved : wello
+# a file will be created in ~/notes.txt
+
+12. Give a 'unique' name to your script - type command
+
+$ type test
+test is a shell builtin
+# cant use this name
+
+$type cp
+cp is /bin/cp
+#cp is a file but not a command
+
+13. Variables - letters , underscores, numbers + lower case variable name recommended
+#variables are case sensitive
+$greeting="Hello"
+$echo $greeting
+
+predefined variables - UPPER CASE
+$ $USER
+
+undefined variables
+$ $USEr
+#empty sting will be used by bash for an underfined variable
+
+$ greeting="Hello"
+$ echo $greeting
+Hello
+$usergreeting="$greeting, $USER"
+#vaiable assignment : the right side has to be a single word for the shell
+echo $usergreeting
+Hello, abbuser
+
+$usergreeting=$greeting,$USER
+#As there is no space.
+echo $usergreeting
+Hello, abbuser
+
+
+$x = 5 
+# this is wrong
+bash will think that 'x' is a command and you are trying to pass an argument of '='
+
+$x=5
+$x
+#bash will think you are trying to execute a command 5 as bash 
+
+But why?
+
+touch one.txt
+$rmfiles="rm *.txt"
+#a dangerous command
+$rmfiles
+# the above command will remove all the files - with out even prompting
+# so make sure if you want to see a value use echo $variable
+$ echo $rmfiles
+rm one.txt
+
+bash does not know about data types, but arithmetic ops can be done.
+
+14. make the Note taking script and make it interactive.
+
+14.1 HELP about absh commands
+#use man pages
+$ man read 
+# cant guarentee this in mac something else might be installed and it could be showed
+
+$man builtins
+#lists lots of commands
+#use help command - lists bash builtins
+
+$help test
+to see all conditional operations on files and strings
+
+$ help [[ 
+tell syou how to use this conditional expr
+
+$help read
+
+15. takenotes.sh - take input and write it to file
+#!/bin/bash
+#get the date value
+date=$(date)
+read -p "Please enter your notes : "  note
+echo $date : $note >> ./notes.txt
+#no paren required around date
+echo Note saved : $note
+
+16. organizing notes: various notes files for various purposes
+A work.txt for work related
+A shop.txt for shopping items
+
+read -p "Please enter your notes : "  note
+topic=$1
+echo $date : $note >> ./$topicnotes.txt
+#no paren required around date
+echo Note saved : $note
+
+16.1 the below command will not work as there is no variable $topicnotes.txt
+#echo $date : $note >> ./$topicnotes.txt
+
+16.2 use brases
+echo $date : $note >> ./${topic}notes.txt
+
+16.3  a new version of the script file
+#get the date
+date=$(date)
+# get the name of the file
+topic=$1
+# complete file name
+filename=./${topic}notes.txt
+#Enter you notes
+read -p "Please enter your notes : "  note
+echo $date : $note >> $filename
+echo Note '$note' saved to $filename
+
+Now : our target is to provide a quotes around the string we entered in the command line and print it down.
+
+16.4
+# echo Note '$note' saved to $filename
+Note '$note' saved to notes.txt
+#'' single quotes escapes everthing that comes in between them - '$note' is not interpreted as a value of note 
+#but it is interpreted as a string.
+
+16.5
+# echo Note \'$note\' saved to $filename
+This command above will print below output
+Note 'kevvu' saved to ./work2notes.txt
+
+17 . What if user has a topic called eat and sleep [not a single word filename]
+      #the output will be saved to eatnotes.txt
+# so execute the below command
+$ sudo bash takenotes.sh "eat and sleep"
+
+# but now bash complains about a ambigious redirect as $filename is eat and sleepnotes.txt [the space confuses bash]
+$ echo $date : $note >> $filename
+
+# So now put double quotes
+$ echo $date : $note >> "$filename"
+# "$filename" will evaluate to the value of filename variable
+# i.e "$filename" will be grouped into a single argument 
+
+18 . In GENERAL 
+- quote the use of variables to prevent surprises
+- use double quotes and not single quotes.
+- a single quote will escape the $ sign : It takes '$filename' as a string by itself. and a file called $filename will be created
+- double quotes keeps some special characters intact - one of them is dolar sign
+19 .
+FINAL FILE IS BELOW
+
+#!/bin/bash
+#get the date
+# this is command substitution - not a variable
+date=$(date)
+
+# get the name of the file
+# use double quotes
+topic="$1"
+
+# complete file name
+#filename=./${topic}notes.txt
+#or above line can be written using double quotes as below
+filename=./"$topic"notes.txt
+#or as below also
+#filename="./${topic}notes.txt"
+# note that braces around ${topic} is necessary else topicnotes.txt  file will be searched for.
+
+#Enter you notes
+read -p "Please enter your notes : "  note
+#double quote the below lines too
+echo "$date : $note" >> "$filename"
+
+#echo "Note \'$note\' saved to $filename"
+# above line is changed - in double quotes single quotes gets escaped
+echo "Note '$note' saved to $filename"
+
+20.Braces
+20.1 $ echo ${foo}bar
+# this will fetch the value of foo and append it to bar
+20.2 $ echo $foobar
+# this will search for a variable called foobar.
+
+21. DEBUGGING
+
+21.1 : What line in the script causes the error.
+#!/bin/bash -x
+# it prints every single line it executes including the values of the variables
+
+21.2 : suppose you want to debug only certain parts of your code
+#set  is command to give options to bash
+set -x
+topic="$1"
+set +x
+
+22. DECISION MAKING IN SHELL SCRIPT
+
+22.1 if condition
+$ if mkdir foo; then echo "yes"; else echo "no"; fi
+# ends with fi
+# when the if and then statements come on the same line a ; semicolon is used to separate them.
+
+use case 1:
+if condiftion ; then
+fi
+
+use case 2:
+if condition 
+then 
+...
+else 
+...
+fi
+# if then else and fi should be first word of a line or come after a semi colon
+
+22.2 return codes
+When a unix program ends and returns a number 0-255
+0 - success
+other - error codes
+
+exit 0 : script will end and return success.
+
+22.2 conditional expression : to perform tests
+[[ expr ]] : note the spaces before and after expr
+
+[[ $str ]] : true if str holds a value
+[[ $str = "something" ]] : use spaces here to check equality
+[[ -e $filename ]] : true if file exists
+-d : true if a directory exists
+# note the spaces
+# no quotes required in the expr between [[ ]]
+
+23. file that will facilitate the creation of new bash scripts
+----------------------------------------------------------------------------------------------
+#!/bin/bash
+
+# used to create a new bash script and set permission
+
+#script name
+if [[ ! $1 ]]; then
+        echo "Missing file name argument"
+        exit 1
+fi
+
+scriptname="$1"
+
+# variable pointing to bin directory
+# some permissons problem for the moment we are using local bin directory
+#bindir="${HOME}/bin"
+bindir="./bin"
+
+filename="${bindir}/${scriptname}"
+
+# does the bin dir exist
+if [[ ! -d $bindir ]]; then
+        if mkdir "$bindir" ; then
+                echo "created bin directory"
+        else
+                echo "Could not create bin directory"
+                exit 1
+        fi
+fi
+
+#check if a (user created) file name also exists
+if [[ -e $filename ]]; then
+        echo "file already exists"
+        exit 1
+fi
+
+# lets check if there is no built in command if user file exists
+if type "${scriptname}" ;then
+        echo "there is already a command with the specified name ${scriptname}"
+        exit 1
+fi
+
+#now lets create the script
+echo "#!/bin/bash" >> "$filename"
+chmod u+x "$filename"
+
+#lets check if a variable exists or note with out making any assumptions
+if [[ $EDITOR ]]; then
+        $EDITOR "$filename"
+else
+        # lets say that $EDITOR is not set
+        echo "script created but no var set for \$EDITOR"
+        # below line or above can be used
+        # echo 'script created but no var set for $EDITOR'
+        #vi $filename
+fi
+
+echo "end of script"
+exit 0
+
+
+----------------------------------------------------------------------------------------------
+24. to export a variable
+$ export EDITOR=nano
+
+25. help test
+to see all conditional operations on files and strings
+
+26. Arithmetic tests
+
+[[ arg1 op arg2 ]]
+
+op : -eq,-ne,-lt,-gt 
+# [dont use > < = for numbers]
+
+27. Special variables
+$# : number of script arguments
+$? : exit status of last command you ran..!
+
+28 length of a string passed as first argument.
+${#1}
+
+29 : conditional expression
+[[ ... ]]
+
+
+--------------- Input and output module ---------------------
+30. $ echo -e "a\tb" 
+echo prints a new line at the end
+
+31. printf "hello\n"
+
+31.1 string formatting
+$printf "Hello %s\n" ${USER}
+
+31.2 more arguments
+$ printf "*%s*\n" a e i o u
+*a*
+*e*
+*i*
+*o*
+*u*
+# every argument inturn is taken and o/p is printed everytime
+
+31.3 format your data for you
+$ printf "%20s |%20s |%20s |\n" $(ls)
+
+31.4 printf to a variable instead of the screen
+abbuser@IN-W-ITLIS7J2:/$ printf -v greeting "Hello %s how are you?" ${USER}
+abbuser@IN-W-ITLIS7J2:/$ echo $greeting
+Hello abbuser how are you?
+
+31.5 
+https://wiki.bash-hackers.org/
+help printf
+man printf
+man 3 printf
+
+32 user input
+
+32.1 Read command
+
+32.2 
+Read -n : specific number of characters
+-N : stop reading when you encounter a new line
+-s : supress output for reading passwords
+-r : receive raw input : best to do this if you want to enter something with backslashes 
+$read x y
+# first word into x
+# rest of the words in to y
+
+32.3 demo 
+$ read; echo $REPLY
+# what ever you read : if no variable is mentioned then it will end in REPLY variable.
+
+33 How does read know if a word ends and other word begins.
+IFS : input feild separator.
+$IFS=:
+
+Example:
+abbuser@IN-W-ITLIS7J2:~$ IFS=,
+abbuser@IN-W-ITLIS7J2:~$ read a b c
+12 34,5,6
+abbuser@IN-W-ITLIS7J2:~$ echo $a
+12 34
+$echo $IFS
+#will print space..its setttings is reverted
+
+34.STANDARD STREAMS
+
+34.1
+When a shell script start it automatically connects with 3 standard streams
+std input output and error are identified either by a number or a special file.
+
+std input has file desscriptor 0 : /dev/stdin
+std output has file desciptor 1 : /dev/stdout
+std error has file descriptor 2 : /dev/stderr
+
+34.2 bit bucket
+/dev/null
+any data you send there is simply discarded and writing to this location always suceeds.
+
+35 syntax to redirect streams
+# we can input from a file/command and we can send o/p or err messages to a file or other commands as well.
+
+redirection#1
+35.1 input redirection
+$grep milk < notes.txt
+
+35.2 o/p redirection
+$ls > list of files.txt
+# this will always overwrite this.
+
+$ls >> list of files.txt
+#this will append to the end of the file contents.
+
+35.3 pipes redirection
+ls | grep filename
+
+redirection#2
+35.4 if you prefix the o/p redirection with number : you can specify a stream which you want to redirect.
+Ex : redirect error to a file. / discard them 
+Ex : command 2> /dev/null
+#default is 1
+
+35.5 re-direct a stream into another stream
+Ex : >&2 
+this will redirect standdard output to standard error
+Ex : 2>&1
+this will send all errors to standard output.
+
+35.6 Another Example
+$ cmd > logfile 2>&1
+is similar to 
+$ cmd 1>logfile 2>&1
+# this command will take the standard o/p from a command and save it in a log file
++
+# also sends all errors into standard output
+#AS STANDARD OUTPUT POINTS TO THE LOG FILE ALL ERRORS END UP IN THE LOG FIE TOO
+
+35.7
+REDIRECTINGSEPARATE STREAMS TO THE SAME FILE WILL NOT WORK AS THEY OVERWRITE EACH OTHERS DATA
+$ cmd 1>logfile 2>logfile - is wring
+$ cmd 1>logfile 2>&1 - is correct
+
+35.8 order matters
+$ cmd < inputfile > outputfile   [ cmd < inputfile  1 > outputfile ]
+$ >outputfile cmd < inputfile    [1 > outputfile cmd < inputfile]
+# these two commands are same : they will redirect standard output to the o/p file and they will take standard inputfrom the input file
+
+# the below two commands are different
+$cmd >logfile 2>&1  [cmd 1>logfile  2>&1]
+# this command will send standard output to the log file + and duplicates all errors to the standard output (i.e to the log file)
+$2>&1 >logfile cmd [2>&1 1>logfile command]
+# sends all errros to the std o/p which is the terminal still + standard output to the log file 
+
+
+36 control flow - order in which code is executed
+while/until
+for loop
+break - premature end
+continue - skip a cycle
+compound command
+|| &&
+
+36.1
+---
+while test; do
+ list of commands
+done
+---
+ untill test; do
+---
+for var in words ; do
+ ...
+done
+---
+
+for with wild card expansion
+
+---
+for (( a; b; c )) ; do
+
+done
+---
+
+
+
+
+
+
+
+
+
+
+
+ 

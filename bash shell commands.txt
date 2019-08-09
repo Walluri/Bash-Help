@@ -9,7 +9,7 @@ bin/bash
 
 4. #! - SharpBang ..shbang
 this is put at the top of the file - this is the first thing we want in our file.
-    $ #! /bin/bash
+    #! /bin/bash
 
 5. comments 
 # comment
@@ -58,6 +58,8 @@ else
  echo "bye"
 fi
 
+12 : list directories
+ls -ld
 
 12.  COMPARISION OPERATORS
 $val1 -eq val2  : Returns true if values are equal
@@ -128,13 +130,20 @@ for NAME in $NAMES
 done
 
 
+16. how to copy files from another pc to this pc.
+$scp abbuser@10.170.244.36:~/Desktop/OwnTracks/generate-SERVER.sh .
+# you will be prompted with a password.
 
 
+17. Difference between () and {} in bash
 
+17.1  () - command substitution : which means first evaluate () and then rest of the line
+abbuser@IN-W-ITLIS7J2:~/Desktop$ echo "today is : $(date)"
+today is : Thu Aug  8 07:41:00 IST 2019
 
-
-
-
+17.2 {} - expands a variable
+abbuser@IN-W-ITLIS7J2:~/Desktop/OwnTracks$ ${HOME}
+-bash: /home/abbuser: Is a directory
 
 
 

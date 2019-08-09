@@ -1,0 +1,90 @@
+AWK : 
+ - manipulate data 
+ - generate some reports by processing from files
+ - pattern scanning and processing
+ -  see the awk documentation - this is the best
+SYNTAX :
+awk optionsFLAGS '/pattern/{actions}'  input.txt > output.txt
+awk optionsFLAGS '/REGEX/{actions}'  input.txt > output.txt
+
+1. Print the contents of a file.
+$awk {print} one.txt
+#the contents of one.txt will be printed on the screen
+# print scans each line
+
+2. $ notation
+$ awk '{print $0}' one.txt
+# awk scans each and every line
+# Now when this command reaches the first line it prints the full contents of that line in the screen and this is repeated further on.
+#$0 - print entire row
+
+3. To Print a first column  and third column and so on.
+$ awk '{print $1}' one.txt
+$ awk '{print $3}' one.txt
+
+4. using pattern along with action -> print a particular line matching an regular expression pattern.
+$ awk '/^[0-9]/{print}' one.txt
+#print(action) any line that begins with an action.
+
+5. print a line that contains a particular text
+$ awk '/line3/{print}' one.txt
+ 
+6. inbuilt variables 
+NR : number
+$ awk '{print NR $0}' one.txt
+# prints all lines with an index at the starting
+
+NF : feild count
+# prints the number/count of fields/columns in each row
+awk '{print NF}' one.txt
+
+$NF : prints the last column
+$ awk '{print $1,$NF}' one.txt
+# print the first and the last column
+
+$ awk '{print $1,$(NF-1)}' one.txt
+# print the second last column
+
+BEGIN PATTERN : Awk will execute the action(s) specfified in BEGIN only once befote any input lines are read
+END PATTERN : Awk will execute the actions specified in END before it actually quits
+
+7. inbuilt functions 
+ORS : output record separator : format output
+$ awk 'BEGIN{ORS=" :\n"} {print $0}' one.txt
+# attach a : colon at the end of each record.
+
+OFS : output field separator
+$ awk 'BEGIN{OFS="=="} {print $1,$2,$3}' one.txt
+#1==line1 
+# print the first column and use the field separator and print the second column
+
+8. print the length of a row which has a longest length
+$ awk ' {if(length($0)>max)max = length($0)} END {print max}' one.txt
+
+9.Print the whole line when a particular column has a particular string
+$awk '{if($1=="4") print $0}' one.txt
+#while going from top to bottom if you have the value of first column as "4" then print that row completely.	
+
+10. SYNTAX redefined
+$awk 'BEGIN{begin_actions_once}/pattern1/{action1}/pattern2{actions}/........END{end_actions_once}'
+
+11. Exercise : Pass or fail of students
+//Print all rows if they are pass or failaccording to the pattern
+$ awk '{if ($2>10) print $0,"=>","Passed"; else {print $0,"=>FAIL"} }' marks.txt
+
+
+--------------------------------
+$ cat one.txt
+1 line1
+2 line2
+three line3
+4 line4
+5 line5
+6 line6
+7 line7
+
+$ cat marks.txt
+james 6 1 2 3
+jack 9 2 3 4
+jill 12 3 4 5
+
