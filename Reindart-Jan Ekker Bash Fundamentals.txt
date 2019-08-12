@@ -564,14 +564,186 @@ for (( a; b; c )) ; do
 done
 ---
 
+37. example to strip contents of a file
+
+# check if striptoken is passed as an argument
+if [ ! $1 ];then
+        echo "need one argument" >&2
+fi
+
+#find and print the line if token is found
+while read -r; do
+        if [[ $REPLY =~ $1 ]]; then
+                echo $REPLY
+                break
+        fi
+done
+#print the rest of the file
+while read -r; do
+        echo $REPLY
+done
+
+# run the command like this  test.txt[one two three three two one]
+$sudo bash stripto.sh two <test.txt
+#o/p will be like two three 3 two
 
 
+38. writing the same with continue 
+#!/bin/bash
 
+if [[ ! $1 ]]; then
+        echo "strip token argument needed"
+fi
 
+#use a variable as a flag to indicate if a particular line is found.
+found=""
+while read -r; do
+        if [[ ! $found ]]; then
+                if [[ $REPLY =~ $1 ]]; then
+                        found="yes"
+                else
+                        continue
+                fi
+        fi
+        echo $REPLY
+done
 
+39. CASE statement
+syntax :
 
+case word in 
+	pattern1)
+	----;;
+	pattern2)
+	----;;
+esac
 
+Example.
+case $1 in
+        apple)
+                echo "its an Apple";;
+        ball)
+                echo "its a ball";;
+        circle)
+                echo "its a circle";;
+        *)
+                echo "its something else";;
+esac
 
+$ sudo bash casetest.sh apple
+its an Apple
 
+40.COMMAND GROUPS : {}
 
+{} : will group the statements into a single statement
+you can use input/output redirection for the whole group.
+use the group in an if statement or while loop.
+{ cmd1;cmd2;cmd3; }
+#note the whitespaces + o/p of the last cmd will be the o/p of the group
+# || && can be used instead of ;
+# the execution of the next depends on previous.
+
+[[ $1 ]] || { echo "missing argument";exit 1; }
+#if the $1 is not empy then next grouping statement will not be executed.
  
+
+41. ADVANCED FEATURES OF BASH VARIABLES
+
+41.1 
+# declareto only hold integers so that you can use arth expr
+# can make read only
+# export a variable
+# store multiple values in a variable : array
+
+41.2 
+$ declare -i varName
+# variable can hold integers - assigning string will not show an error
+# use + to unset the integer attribute.
+$ declare +i varName
+
+41.3
+$ declare -i p
+$ p="4+5"
+# quotes are only needed if you put spaces in between the commands
+$ echo $p
+9
+# if its not a integer "4+5" is printed
+
+41.4 let command : c like syntax
+
+$ let n=100/2
+$ echo $n
+50
+
+# is equivalent to 
+$ (( n = 100 /3 ))
+#works with spaces in between them
+$ echo $n
+33
+
+...$(( p = $(ls | wc -l) ))
+
+41.5 DIFFERENCE BETWEEN A COMMAND AND A SUBSTITUTION COMMAND
+ #substitution by itself is not a command
+
+ $ declare -i x
+ $ x=100/2
+ $ echo $x
+ 50
+# try to increase x by 1
+#the below is a command substitution
+ $ $((++x))
+51: command not found
+#x is increased by 1
+# the expression ++x return 51
+# as the whole expression is substituted by 51
+# substituion by itself is not a command : its an expression that gets replaced by its value.
+
+$ ((++x))
+# this is just a command and bash doesnot print anything
+$x=$((x+1))
+
+zero is false
+if a number begins with zero its treated as octal by bash.
+
+42.guessing game
+
+
+#!/bin/bash
+declare -ir target=$(( ($RANDOM % 100)+1 ))
+declare -i guess=0
+
+until (( target == guess )); do
+        read -p "Enter a number between 0 and 100" guess
+        (( guess )) || continue
+#if the first statement is false then the second is executed.
+        if (( guess > target ));then
+                echo "reduce"
+        elif (( guess < target ));then
+                echo  "increase"
+        else
+                echo "they are equal "
+        fi
+done
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
