@@ -1,0 +1,87 @@
+grep : text searching and manipulation.
+globally search a regular expression and print.
+
+1. Usage : grep "string"   filename
+
+2. Regular expression search
+$grep "^[0-9]" grep.txt
+#search for lines that begin with a number in the file grep.txt and print them.
+
+3.wild cards
+$grep "string" grep.*
+#this will search in all files that start with grep[grep.csv,grep.txt]
+
+4. case insensitive search
+$grep -i "STring" demo.txt
+
+5. regex search
+$ grep "from.*mutt" grep.txt
+# want to search a line that has from and ends with mutt with any number of characters in between
+#below o/p is displayed
+  command 'mutt' from snap mutt (1-11-3-rel)
+  command 'mutt' from deb mutt
+
+6.FULL word search 
+$ grep -iw "Command" grep.txt
+Command 'matt' not found, did you mean:
+  command 'mutt' from deb mutt
+#a word like commands will not be matched, it will be excluded
+
+7. after a match print a few lines AROUND it
+
+7.1 Print a few lines After a match  : -A
+$ grep -A 1 -i "RATT" grep.txt
+  commands 'ratt' from deb ratt
+  command 'mtt' from deb xawtv
+# this will print 1 line after a line matches "RATT"
+
+7.2 BEFORE -B
+
+7.3 AROUND : -C
+
+8.If you want to search in the sub folders also : -r
+$  sudo grep -r -i "MAIN" ~ | wc -l
+#search for the string MAIN case insensitively  in sub folders of ~ | print the number of matches
+
+9. invert searching : -v
+
+10 : Count the number of matches : -c
+#the below command prints the count of the number of matches while searching through the * directory.
+$ grep -c -i "Command" *
+grep: bin: Is a directory
+bin:0
+changeext.sh:0
+create_script.sh:2
+
+11. Dispaly the files only that matches the given pattern  : I
+# this will print the line that matches nd the file name
+$ grep -I "command" *
+grep: bin: Is a directory
+create_script.sh:# lets check if there is no built in command if user file exists
+create_script.sh:       echo "there is already a command with the specified name ${scriptname}"
+
+
+12. Position of the match : -b 
+     Word match : -o
+
+$ grep -b "teacher" grep.txt
+0:An eng teacher
+228:The teacher
+# this is printing the beginning of the line number : not the match
+
+abbuser@IN-W-ITLIS7J2:~/Desktop/bashtutorial$ grep -bo "teacher" grep.txt
+7:teacher
+232:teacher
+# this is printing the number at which the match is found.
+
+13. line number : - n
+$ grep -n "teacher" grep.txt
+1:An eng teacher
+11:The teacher
+
+
+
+
+
+
+
